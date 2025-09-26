@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hair-swap-tools"
+version = "0.0.1"
+description = "Hair swap inference API"
+requires-python = ">=3.10"
+dependencies = [
+  "torch",
+  "diffusers",
+  "transformers",
+  "omegaconf",
+  "pillow",
+  "numpy",
+  "einops",
+  "tqdm",
+  "opencv-python",
+  "packaging",
+]
+
+[tool.setuptools]
+packages = ["hair_swap_api"]
