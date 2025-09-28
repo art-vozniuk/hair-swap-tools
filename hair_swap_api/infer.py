@@ -5,13 +5,13 @@ from PIL import Image
 from omegaconf import OmegaConf
 import os
 import cv2
-from diffusers import DDIMScheduler, UniPCMultistepScheduler
-from diffusers.models import UNet2DConditionModel
-from ref_encoder.latent_controlnet import ControlNetModel
-from ref_encoder.adapter import *
-from ref_encoder.reference_unet import ref_unet
-from pipeline import StableHairPipeline
-from pipeline_cn import StableDiffusionControlNetPipeline
+from .diffusers import DDIMScheduler, UniPCMultistepScheduler
+from .diffusers.models import UNet2DConditionModel
+from .ref_encoder.latent_controlnet import ControlNetModel
+from .ref_encoder.adapter import *
+from .ref_encoder.reference_unet import ref_unet
+from .pipeline import StableHairPipeline
+from .pipeline_cn import StableDiffusionControlNetPipeline
 
 def concatenate_images(image_files, output_file, type="pil"):
     if type == "np":
