@@ -67,7 +67,7 @@ def _get_default_logging_level():
 
 
 def _get_library_name() -> str:
-    return __name__.split(".")[0]
+    return __name__.split(".")[1]
 
 
 def _get_library_root_logger() -> logging.Logger:
