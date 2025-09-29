@@ -5,13 +5,24 @@ from typing import Tuple
 from omegaconf import OmegaConf
 import os
 import cv2
-from diffusers import DDIMScheduler, UniPCMultistepScheduler
-from diffusers.models import UNet2DConditionModel
-from ref_encoder.latent_controlnet import ControlNetModel
-from ref_encoder.adapter import *
-from ref_encoder.reference_unet import ref_unet
-from utils.pipeline import StableHairPipeline
-from utils.pipeline_cn import StableDiffusionControlNetPipeline
+from .diffusers import DDIMScheduler, UniPCMultistepScheduler
+from .diffusers.models import UNet2DConditionModel
+from .ref_encoder.latent_controlnet import ControlNetModel
+from .ref_encoder.adapter import *
+from .ref_encoder.reference_unet import ref_unet
+from .utils.pipeline import StableHairPipeline
+from .utils.pipeline_cn import StableDiffusionControlNetPipeline
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+)
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.propagate = True
 
 def concatenate_images(image_files, output_file, type="pil"):
     if type == "np":
@@ -165,9 +176,23 @@ def hair_transfer(source_image: Image.Image, reference_image: Image.Image) -> Tu
 
 if __name__ == '__main__':
     repo_path = os.path.dirname(os.path.abspath(__file__))
+    logger.info(f"Repo path: {repo_path}")
     model = StableHair(config=os.path.join(repo_path, "configs", "hair_transfer.yaml"), weight_dtype=torch.float32)
+    logger.info(f"Model: {model}")
     kwargs = OmegaConf.to_container(model.config.inference_kwargs)
+    kwargs["source_image"] = os.path.join(repo_path, kwargs["source_image"])
+    kwargs["reference_image"] = os.path.join(repo_path, kwargs["reference_image"])
+    logger.info(f"Kwargs: {kwargs}")
+    logger.info(f"Source image: {kwargs['source_image']}")
+    logger.info(f"Reference image: {kwargs['reference_image']}")
     id, image, source_image_bald, reference_image = model.Hair_Transfer(**kwargs)
+    logger.info(f"Id: {id}")
+    logger.info(f"Image: {image}")
+    logger.info(f"Source image bald: {source_image_bald}")
+    logger.info(f"Reference image: {reference_image}")
     os.makedirs(model.config.output_path, exist_ok=True)
+    logger.info(f"Output path: {model.config.output_path}")
+    logger.info(f"Save name: {model.config.save_name}")
     output_file = os.path.join(model.config.output_path, model.config.save_name)
     concatenate_images([id, source_image_bald, reference_image, (image*255.).astype(np.uint8)], output_file=output_file, type="np")
+    logger.info(f"Output file: {output_file}")

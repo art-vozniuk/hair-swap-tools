@@ -7,14 +7,14 @@ import torch
 from einops import rearrange
 import torch.distributed as dist
 from tqdm import tqdm
-from diffusers.utils import is_accelerate_available
+from ..diffusers.utils import is_accelerate_available
 from packaging import version
 from transformers import CLIPTextModel, CLIPTokenizer
 
-from diffusers.configuration_utils import FrozenDict
-from diffusers.models import AutoencoderKL, UNet2DConditionModel
-from diffusers import DiffusionPipeline
-from diffusers.schedulers import (
+from ..diffusers.configuration_utils import FrozenDict
+from ..diffusers.models import AutoencoderKL, UNet2DConditionModel
+from ..diffusers import DiffusionPipeline
+from ..diffusers.schedulers import (
     DDIMScheduler,
     DPMSolverMultistepScheduler,
     EulerAncestralDiscreteScheduler,
@@ -22,10 +22,10 @@ from diffusers.schedulers import (
     LMSDiscreteScheduler,
     PNDMScheduler,
 )
-from diffusers.utils import deprecate, logging, BaseOutput
+from ..diffusers.utils import deprecate, logging, BaseOutput
 
-from ref_encoder.latent_controlnet import ControlNetModel
-from ref_encoder.reference_control import ReferenceAttentionControl
+from ..ref_encoder.latent_controlnet import ControlNetModel
+from ..ref_encoder.reference_control import ReferenceAttentionControl
 import torch.nn.functional as F
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name

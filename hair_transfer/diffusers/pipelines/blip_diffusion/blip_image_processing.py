@@ -34,7 +34,7 @@ from transformers.image_utils import (
 )
 from transformers.utils import TensorType, is_vision_available, logging
 
-from diffusers.utils import numpy_to_pil
+from ...diffusers.utils import numpy_to_pil
 
 
 if is_vision_available():

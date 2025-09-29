@@ -20,7 +20,7 @@ import jax.numpy as jnp
 from flax.core.frozen_dict import FrozenDict
 from transformers import CLIPTokenizer, FlaxCLIPTextModel
 
-from diffusers.utils import logging
+from ...diffusers.utils import logging
 
 from ...models import FlaxAutoencoderKL, FlaxUNet2DConditionModel
 from ...schedulers import (

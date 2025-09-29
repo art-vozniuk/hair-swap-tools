@@ -5,19 +5,19 @@ import torch
 import torch.nn as nn
 import torch.utils.checkpoint
 
-from diffusers.configuration_utils import ConfigMixin, register_to_config
-from diffusers.loaders import UNet2DConditionLoadersMixin
-from diffusers.utils import BaseOutput, logging
-from diffusers.models.activations import get_activation
-from diffusers.models.attention_processor import (
+from ..diffusers.configuration_utils import ConfigMixin, register_to_config
+from ..diffusers.loaders import UNet2DConditionLoadersMixin
+from ..diffusers.utils import BaseOutput, logging
+from ..diffusers.models.activations import get_activation
+from ..diffusers.models.attention_processor import (
     ADDED_KV_ATTENTION_PROCESSORS,
     CROSS_ATTENTION_PROCESSORS,
     AttentionProcessor,
     AttnAddedKVProcessor,
     AttnProcessor,
 )
-from diffusers.models.lora import LoRALinearLayer
-from diffusers.models.embeddings import (
+from ..diffusers.models.lora import LoRALinearLayer
+from ..diffusers.models.embeddings import (
     GaussianFourierProjection,
     ImageHintTimeEmbedding,
     ImageProjection,
@@ -29,8 +29,8 @@ from diffusers.models.embeddings import (
     TimestepEmbedding,
     Timesteps,
 )
-from diffusers.models.modeling_utils import ModelMixin
-from diffusers.models.unet_2d_blocks import (
+from ..diffusers.models.modeling_utils import ModelMixin
+from ..diffusers.models.unet_2d_blocks import (
     UNetMidBlock2DCrossAttn,
     UNetMidBlock2DSimpleCrossAttn,
     get_down_block,

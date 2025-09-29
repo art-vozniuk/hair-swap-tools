@@ -16,20 +16,20 @@ from torchvision import transforms
 from tqdm.auto import tqdm
 from transformers import AutoTokenizer, PretrainedConfig
 
-import diffusers
-from diffusers import (
+import .diffusers as diffusers
+from .diffusers import (
     AutoencoderKL,
     UNet2DConditionModel,
     DDPMScheduler,
     UniPCMultistepScheduler,
 )
-from diffusers.optimization import get_scheduler
-from diffusers.utils import check_min_version, is_wandb_available
+from .diffusers.optimization import get_scheduler
+from .diffusers.utils import check_min_version, is_wandb_available
 import torch.nn.functional as F
 import albumentations as A
 import cv2
-from ref_encoder.latent_controlnet import ControlNetModel
-from utils.pipeline_cn import StableDiffusionControlNetPipeline
+from .ref_encoder.latent_controlnet import ControlNetModel
+from .utils.pipeline_cn import StableDiffusionControlNetPipeline
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.23.0")
@@ -113,7 +113,7 @@ def import_model_class_from_model_name_or_path(pretrained_model_name_or_path: st
 
         return CLIPTextModel
     elif model_class == "RobertaSeriesModelWithTransformation":
-        from diffusers.pipelines.alt_diffusion.modeling_roberta_series import RobertaSeriesModelWithTransformation
+        from .diffusers.pipelines.alt_diffusion.modeling_roberta_series import RobertaSeriesModelWithTransformation
 
         return RobertaSeriesModelWithTransformation
     else:
