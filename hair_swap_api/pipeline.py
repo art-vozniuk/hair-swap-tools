@@ -87,6 +87,7 @@ class StableHairPipeline(DiffusionPipeline):
     @property
     def _execution_device(self):
         if self.device != torch.device("meta") or not hasattr(self.unet, "_hf_hook"):
+            logger.info(f"_execution_device: {self.device}")
             return self.device
         for module in self.unet.modules():
             if (
@@ -94,7 +95,9 @@ class StableHairPipeline(DiffusionPipeline):
                     and hasattr(module._hf_hook, "execution_device")
                     and module._hf_hook.execution_device is not None
             ):
+                logger.info(f"_execution_device: {module._hf_hook.execution_device}")
                 return torch.device(module._hf_hook.execution_device)
+        logger.info(f"_execution_device: {self.device}")
         return self.device
 
     def _encode_prompt(self, prompt, device, do_classifier_free_guidance, negative_prompt):
@@ -250,13 +253,30 @@ class StableHairPipeline(DiffusionPipeline):
         if latents is None:
             rand_device = "cpu" if device.type == "mps" else device
 
+            def _align_generator(gen):
+                if gen is None:
+                    return None
+                if isinstance(gen, torch.Generator):
+                    try:
+                        seed = gen.initial_seed()
+                    except Exception:
+                        seed = None
+                    if str(gen.device) != str(rand_device):
+                        new_gen = torch.Generator(device=rand_device)
+                        if seed is not None:
+                            new_gen.manual_seed(seed)
+                        return new_gen
+                return gen
+
             if isinstance(generator, list):
+                gens = [_align_generator(g) for g in generator]
                 latents = [
-                    torch.randn(shape, generator=generator[i], device=rand_device, dtype=dtype)
+                    torch.randn(shape, generator=gens[i], device=rand_device, dtype=dtype)
                     for i in range(batch_size)
                 ]
                 latents = torch.cat(latents, dim=0).to(device)
             else:
+                generator = _align_generator(generator)
                 latents = torch.randn(shape, generator=generator, device=rand_device, dtype=dtype).to(device)
 
         else:
@@ -275,7 +295,7 @@ class StableHairPipeline(DiffusionPipeline):
             condition = condition
         elif isinstance(condition, np.ndarray):
             # suppose input is [0, 255]
-            condition = self.images2latents(condition, dtype).cuda()
+            condition = self.images2latents(condition, dtype).to(self._execution_device)
         if do_classifier_free_guidance:
             condition_pad = torch.ones_like(condition) * -1
             condition = torch.cat([condition_pad, condition])
@@ -424,11 +444,11 @@ class StableHairPipeline(DiffusionPipeline):
 
         if isinstance(ref_image, str):
             ref_image_latents = self.images2latents(np.array(Image.open(ref_image).resize((width, height))),
-                                                    latents_dtype).cuda()
+                                                    latents_dtype).to(self._execution_device)
         elif isinstance(ref_image, np.ndarray):
-            ref_image_latents = self.images2latents(ref_image, latents_dtype).cuda()
+            ref_image_latents = self.images2latents(ref_image, latents_dtype).to(self._execution_device)
         elif isinstance(ref_image, torch.Tensor):
-            ref_image_latents = self.images2latents(ref_image, latents_dtype).cuda()
+            ref_image_latents = self.images2latents(ref_image, latents_dtype).to(self._execution_device)
 
         ref_padding_latents = torch.ones_like(ref_image_latents) * -1
         ref_image_latents = torch.cat([ref_padding_latents, ref_image_latents]) if do_classifier_free_guidance else ref_image_latents
