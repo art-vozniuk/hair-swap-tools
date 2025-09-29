@@ -40,10 +40,12 @@ class StableHair:
                 device = "cpu"
         self.device = torch.device(device)
 
+        repo_path = os.path.dirname(os.path.abspath(__file__))
+
         ### Load controlnet
         unet = UNet2DConditionModel.from_pretrained(self.config.pretrained_model_path, subfolder="unet").to(self.device)
         controlnet = ControlNetModel.from_unet(unet).to(self.device)
-        _state_dict = torch.load(os.path.join(self.config.pretrained_folder, self.config.controlnet_path), map_location="cpu")
+        _state_dict = torch.load(os.path.join(repo_path, self.config.pretrained_folder, self.config.controlnet_path), map_location="cpu")
         controlnet.load_state_dict(_state_dict, strict=False)
         controlnet.to(weight_dtype)
 
@@ -58,15 +60,15 @@ class StableHair:
 
         ### load Hair encoder/adapter
         self.hair_encoder = ref_unet.from_pretrained(self.config.pretrained_model_path, subfolder="unet").to(self.device)
-        _state_dict = torch.load(os.path.join(self.config.pretrained_folder, self.config.encoder_path), map_location="cpu")
+        _state_dict = torch.load(os.path.join(repo_path, self.config.pretrained_folder, self.config.encoder_path), map_location="cpu")
         self.hair_encoder.load_state_dict(_state_dict, strict=False)
         self.hair_adapter = adapter_injection(self.pipeline.unet, device=self.device, dtype=weight_dtype, use_resampler=False)
-        _state_dict = torch.load(os.path.join(self.config.pretrained_folder, self.config.adapter_path), map_location="cpu")
+        _state_dict = torch.load(os.path.join(repo_path, self.config.pretrained_folder, self.config.adapter_path), map_location="cpu")
         self.hair_adapter.load_state_dict(_state_dict, strict=False)
 
         ### load bald converter
         bald_converter = ControlNetModel.from_unet(unet).to(self.device)
-        _state_dict = torch.load(self.config.bald_converter_path, map_location="cpu")
+        _state_dict = torch.load(os.path.join(repo_path, self.config.bald_converter_path), map_location="cpu")
         bald_converter.load_state_dict(_state_dict, strict=False)
         bald_converter.to(dtype=weight_dtype)
         del unet
@@ -148,7 +150,8 @@ class StableHair:
         return image
 
 def hair_transfer(source_image: Image.Image, reference_image: Image.Image) -> Tuple[Image.Image, Image.Image]:
-    model = StableHair(config="./configs/hair_transfer.yaml", weight_dtype=torch.float32)
+    repo_path = os.path.dirname(os.path.abspath(__file__))
+    model = StableHair(config=os.path.join(repo_path, "configs", "hair_transfer.yaml"), weight_dtype=torch.float32)
     kwargs = OmegaConf.to_container(model.config.inference_kwargs)
     kwargs["source_image"] = source_image
     kwargs["reference_image"] = reference_image
@@ -161,7 +164,8 @@ def hair_transfer(source_image: Image.Image, reference_image: Image.Image) -> Tu
 
 
 if __name__ == '__main__':
-    model = StableHair(config="./configs/hair_transfer.yaml", weight_dtype=torch.float32)
+    repo_path = os.path.dirname(os.path.abspath(__file__))
+    model = StableHair(config=os.path.join(repo_path, "configs", "hair_transfer.yaml"), weight_dtype=torch.float32)
     kwargs = OmegaConf.to_container(model.config.inference_kwargs)
     id, image, source_image_bald, reference_image = model.Hair_Transfer(**kwargs)
     os.makedirs(model.config.output_path, exist_ok=True)
