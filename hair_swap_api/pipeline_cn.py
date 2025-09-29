@@ -22,12 +22,12 @@ import torch
 import torch.nn.functional as F
 from transformers import CLIPImageProcessor, CLIPTextModel, CLIPTokenizer
 
-from .diffusers.image_processor import PipelineImageInput, VaeImageProcessor
-from .diffusers.loaders import FromSingleFileMixin, LoraLoaderMixin, TextualInversionLoaderMixin
-from .diffusers.models import AutoencoderKL, UNet2DConditionModel
-from .diffusers.models.lora import adjust_lora_scale_text_encoder
-from .diffusers.schedulers import KarrasDiffusionSchedulers
-from .diffusers.utils import (
+from hair_swap_api.diffusers.image_processor import PipelineImageInput, VaeImageProcessor
+from hair_swap_api.diffusers.loaders import FromSingleFileMixin, LoraLoaderMixin, TextualInversionLoaderMixin
+from hair_swap_api.diffusers.models import AutoencoderKL, UNet2DConditionModel
+from hair_swap_api.diffusers.models.lora import adjust_lora_scale_text_encoder
+from hair_swap_api.diffusers.schedulers import KarrasDiffusionSchedulers
+from hair_swap_api.diffusers.utils import (
     USE_PEFT_BACKEND,
     deprecate,
     logging,
@@ -36,10 +36,10 @@ from .diffusers.utils import (
     unscale_lora_layers,
 )
 from . diffusers.utils.torch_utils import is_compiled_module, is_torch_version, randn_tensor
-from .diffusers.pipelines.pipeline_utils import DiffusionPipeline
-from .diffusers.pipelines.stable_diffusion.pipeline_output import StableDiffusionPipelineOutput
-from .diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
-from .diffusers.pipelines.controlnet.multicontrolnet import MultiControlNetModel
+from hair_swap_api.diffusers.pipelines.pipeline_utils import DiffusionPipeline
+from hair_swap_api.diffusers.pipelines.stable_diffusion.pipeline_output import StableDiffusionPipelineOutput
+from hair_swap_api.diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
+from hair_swap_api.diffusers.pipelines.controlnet.multicontrolnet import MultiControlNetModel
 from .ref_encoder.latent_controlnet import ControlNetModel
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name

@@ -7,14 +7,14 @@ import torch
 from einops import rearrange
 import torch.distributed as dist
 from tqdm import tqdm
-from .diffusers.utils import is_accelerate_available
+from hair_swap_api.diffusers.utils import is_accelerate_available
 from packaging import version
 from transformers import CLIPTextModel, CLIPTokenizer
 
-from .diffusers.configuration_utils import FrozenDict
-from .diffusers.models import AutoencoderKL, UNet2DConditionModel
-from .diffusers import DiffusionPipeline
-from .diffusers.schedulers import (
+from hair_swap_api.diffusers.configuration_utils import FrozenDict
+from hair_swap_api.diffusers.models import AutoencoderKL, UNet2DConditionModel
+from hair_swap_api.diffusers import DiffusionPipeline
+from hair_swap_api.diffusers.schedulers import (
     DDIMScheduler,
     DPMSolverMultistepScheduler,
     EulerAncestralDiscreteScheduler,
@@ -22,7 +22,7 @@ from .diffusers.schedulers import (
     LMSDiscreteScheduler,
     PNDMScheduler,
 )
-from .diffusers.utils import deprecate, logging, BaseOutput
+from hair_swap_api.diffusers.utils import deprecate, logging, BaseOutput
 
 from .ref_encoder.latent_controlnet import ControlNetModel
 from .ref_encoder.reference_control import ReferenceAttentionControl
