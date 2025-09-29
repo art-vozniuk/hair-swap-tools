@@ -1,7 +1,8 @@
 import torch
+from typing import Tuple
 from PIL import Image
 import numpy as np
-from PIL import Image
+from pathlib import Path
 from omegaconf import OmegaConf
 import os
 import cv2
@@ -28,7 +29,7 @@ def concatenate_images(image_files, output_file, type="pil"):
     combined.save(output_file)
 
 class StableHair:
-    def __init__(self, source_image: str, reference_image: str, device=None, weight_dtype=torch.float16) -> None:
+    def __init__(self, source_image: Image.Image, reference_image: Image.Image, device=None, weight_dtype=torch.float16) -> None:
         print("Initializing Stable Hair Pipeline...")
         
         if device is None:
@@ -40,12 +41,14 @@ class StableHair:
                 device = "cpu"
         self.device = torch.device(device)
 
+        repo_root = Path(__file__).resolve().parents[1]
+
         self.pretrained_model_path = "runwayml/stable-diffusion-v1-5"
-        self.pretrained_folder = "./models/stage2"
+        self.pretrained_folder = os.path.join(repo_root, "models/stage2")
         self.encoder_path = "pytorch_model.bin"
         self.adapter_path = "pytorch_model_1.bin"
         self.controlnet_path = "pytorch_model_2.bin"
-        self.bald_converter_path = "./models/stage1/pytorch_model.bin"
+        self.bald_converter_path = os.path.join(repo_root, "models/stage1/pytorch_model.bin")
         self.fusion_blocks = "full"
 
         self.inference_kwargs = {
@@ -116,9 +119,9 @@ class StableHair:
         scale = float(scale)
 
         # load imgs
-        source_image = Image.open(source_image).convert("RGB").resize((size, size))
+        source_image = source_image.convert("RGB").resize((size, size))
         id = np.array(source_image)
-        reference_image = np.array(Image.open(reference_image).convert("RGB").resize((size, size)))
+        reference_image = np.array(reference_image.convert("RGB").resize((size, size)))
         source_image_bald = np.array(self.get_bald(source_image, scale=0.9))
         H, W, C = source_image_bald.shape
 
@@ -161,10 +164,14 @@ class StableHair:
 
         return image
 
-def hair_transfer(source_image: Image.Image, reference_image: Image.Image, logger: logging.Logger) -> Tuple[Image.Image, Image.Image]:
-    model = StableHair(weight_dtype=torch.float32)
-    kwargs = OmegaConf.to_container(model.inference_kwargs)
+def hair_transfer(source_image: Image.Image, reference_image: Image.Image) -> Tuple[Image.Image, Image.Image]:
+    model = StableHair(source_image=source_image, reference_image=reference_image, weight_dtype=torch.float32)
+    kwargs = model.inference_kwargs
     id, image, source_image_bald, reference_image = model.Hair_Transfer(**kwargs)
+    
+    bald_pil = Image.fromarray(source_image_bald)
+    result_pil = Image.fromarray((image * 255.).astype(np.uint8))
+    
     return bald_pil, result_pil
 
 

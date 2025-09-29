@@ -1665,8 +1665,6 @@ class DiffusionPipeline(ConfigMixin, PushToHubMixin):
             filenames = {sibling.rfilename for sibling in info.siblings}
             model_filenames, variant_filenames = variant_compatible_siblings(filenames, variant=variant)
 
-            logger.warning(f"!! hey hey module name: {__name__.split(".")}")
-
             diffusers_module = importlib.import_module(__name__.split(".")[1])
             pipelines = getattr(diffusers_module, "pipelines")
 
