@@ -1,5 +1,9 @@
-*.egg-info/
-
-__pycache__/
-*.py[cod]
-*$py.class
+*.egg-info
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.pywz
+*.pyzw
+*.pyzwz
