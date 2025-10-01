@@ -1,7 +1,7 @@
 [project]
-name = "hair-swap-tools"
+name = "hair_swap"
 version = "0.1.0"
-description = "Add your description here"
+description = "hair_swap"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
