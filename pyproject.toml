@@ -3,7 +3,7 @@ name = "hair_swap"
 version = "0.1.0"
 description = "hair_swap"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "accelerate>=1.10.1",
     "diffusers==0.31.0",
@@ -18,9 +18,9 @@ dependencies = [
     "opencv-python>=4.11.0.86",
     "pillow>=11.3.0",
     "requests>=2.32.5",
-    "torch>=2.8.0",
-    "torchaudio>=2.8.0",
-    "torchvision>=0.23.0",
+    "torch==2.7.1",
+    "torchvision==0.22.1",
+    "torchaudio==2.7.1",
     "transformers==4.45.2",
 ]
 
