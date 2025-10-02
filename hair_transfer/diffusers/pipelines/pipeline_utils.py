@@ -450,7 +450,7 @@ def load_sub_model(
 
     # add kwargs to loading method
     #logger.info(f"!!! Modules: {__name__.split(".")}")
-    diffusers_module = importlib.import_module(__name__.split(".")[1])
+    diffusers_module = importlib.import_module("diffusers")
     loading_kwargs = {}
     if issubclass(class_obj, torch.nn.Module):
         loading_kwargs["torch_dtype"] = torch_dtype
@@ -539,7 +539,7 @@ class DiffusionPipeline(ConfigMixin, PushToHubMixin):
     def register_modules(self, **kwargs):
         # import it here to avoid circular import
         #logger.info(f"!!! Modules: {__name__.split(".")}")
-        diffusers_module = importlib.import_module(__name__.split(".")[1])
+        diffusers_module = importlib.import_module("diffusers")
         pipelines = getattr(diffusers_module, "pipelines")
 
         for name, module in kwargs.items():
@@ -1668,7 +1668,7 @@ class DiffusionPipeline(ConfigMixin, PushToHubMixin):
             model_filenames, variant_filenames = variant_compatible_siblings(filenames, variant=variant)
 
             #logger.info(f"!!! Modules: {__name__.split(".")}")
-            diffusers_module = importlib.import_module(__name__.split(".")[1])
+            diffusers_module = importlib.import_module("diffusers")
             pipelines = getattr(diffusers_module, "pipelines")
 
             # optionally create a custom component <> custom file mapping
@@ -1861,7 +1861,7 @@ class DiffusionPipeline(ConfigMixin, PushToHubMixin):
             cls_name = cls_name[4:] if isinstance(cls_name, str) and cls_name.startswith("Flax") else cls_name
 
             #logger.info(f"!!! Modules: {__name__.split(".")}")
-            diffusers_module = importlib.import_module(__name__.split(".")[1])
+            diffusers_module = importlib.import_module("diffusers")
             pipeline_class = getattr(diffusers_module, cls_name, None) if isinstance(cls_name, str) else None
 
             if pipeline_class is not None and pipeline_class._load_connected_pipes:
